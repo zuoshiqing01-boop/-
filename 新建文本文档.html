@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间与进度条界面</title>
+<style>
+  /* 整体背景与字体 */
+  body {
+    background-color: #0a0a0a;
+    color: #00d8ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  /* 顶部数字时钟 */
+  .clock {
+    font-size: 48px;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+  }
+
+  /* 进度条容器 */
+  .progress-container {
+    width: 300px;
+    margin-bottom: 20px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    background-color: #222;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 20px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d8ff, #0077ff);
+    width: 0%;
+    text-align: right;
+    padding-right: 5px;
+    box-sizing: border-box;
+    border-radius: 10px 0 0 10px;
+    transition: width 0.5s ease;
+  }
+
+  /* 底部版权 */
+  .footer {
+    position: absolute;
+    bottom: 20px;
+    font-size: 14px;
+    color: #00aabb;
+  }
+</style>
+</head>
+<body>
+
+<div class="clock" id="clock">00:00:00</div>
+
+<div class="progress-container">
+  <div class="progress-label"><span>Year（年）</span><span id="year-text">0/365</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="year-bar"></div></div>
+</div>
+
+<div class="progress-container">
+  <div class="progress-label"><span>Month（月）</span><span id="month-text">0/30</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="month-bar"></div></div>
+</div>
+
+<div class="progress-container">
+  <div class="progress-label"><span>Week（周）</span><span id="week-text">0/7</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="week-bar"></div></div>
+</div>
+
+<div class="footer">Powered by ---・---</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+  }
+
+  function updateProgress() {
+    // 固定示例数据
+    const yearCurrent = 271, yearTotal = 365;
+    const monthCurrent = 28, monthTotal = 30;
+    const weekCurrent = 7, weekTotal = 7;
+
+    const yearPercent = (yearCurrent / yearTotal) * 100;
+    const monthPercent = (monthCurrent / monthTotal) * 100;
+    const weekPercent = (weekCurrent / weekTotal) * 100;
+
+    document.getElementById('year-text').textContent = `${yearCurrent}/${yearTotal}`;
+    document.getElementById('year-bar').style.width = `${yearPercent}%`;
+
+    document.getElementById('month-text').textContent = `${monthCurrent}/${monthTotal}`;
+    document.getElementById('month-bar').style.width = `${monthPercent}%`;
+
+    document.getElementById('week-text').textContent = `${weekCurrent}/${weekTotal}`;
+    document.getElementById('week-bar').style.width = `${weekPercent}%`;
+  }
+
+  setInterval(updateClock, 1000);
+  updateClock();
+  updateProgress();
+</script>
+
+</body>
+</html>
