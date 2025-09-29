@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间与进度条界面（实时版）</title>
+<style>
+  body {
+    background-color: #1a1a1a;
+    color: #00d8ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+
+    transform: scale(0.6);
+    transform-origin: center;
+  }
+
+  .clock {
+    font-size: 48px;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+  }
+
+  .progress-container {
+    width: 300px;
+    margin-bottom: 20px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    background-color: #222;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 20px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d8ff, #0077ff);
+    width: 0%;
+    text-align: right;
+    padding-right: 5px;
+    box-sizing: border-box;
+    border-radius: 10px 0 0 10px;
+    transition: width 0.5s ease;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 20px;
+    font-size: 14px;
+    color: #00aabb;
+  }
+</style>
+</head>
+<body>
+
+<div class="clock" id="clock">00:00:00</div>
+
+<div class="progress-container">
+  <div class="progress-label">
+    <span>Year（年）</span>
+    <span id="year-text">0/365</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="year-bar"></div>
+  </div>
+</div>
+
+<div class="progress-container">
+  <div class="progress-label">
+    <span>Month（月）</span>
+    <span id="month-text">0/30</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="month-bar"></div>
+  </div>
+</div>
+
+<div class="progress-container">
+  <div class="progress-label">
+    <span>Week（周）</span>
+    <span id="week-text">0/7</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="week-bar"></div>
+  </div>
+</div>
+
+<div class="footer">Powered by ---・---</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+  }
+
+  function updateProgress() {
+    const now = new Date();
+
+    // ✅ 年进度
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const endOfYear = new Date(now.getFullYear() + 1, 0, 1);
+    const yearPassed = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
+    const yearTotal = Math.floor((endOfYear - startOfYear) / (1000 * 60 * 60 * 24));
+    const yearPercent = (yearPassed / yearTotal) * 100;
+    document.getElementById('year-text').textContent = `${yearPassed}/${yearTotal}`;
+    document.getElementById('year-bar').style.width = `${yearPercent}%`;
+
+    // ✅ 月进度
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const monthPassed = Math.floor((now - startOfMonth) / (1000 * 60 * 60 * 24)) + 1;
+    const monthTotal = Math.floor((endOfMonth - startOfMonth) / (1000 * 60 * 60 * 24));
+    const monthPercent = (monthPassed / monthTotal) * 100;
+    document.getElementById('month-text').textContent = `${monthPassed}/${monthTotal}`;
+    document.getElementById('month-bar').style.width = `${monthPercent}%`;
+
+    // ✅ 周进度（自然周：周一到周日）
+    const dayOfWeek = (now.getDay() + 6) % 7; // 把周一设为0
+    const weekPassed = dayOfWeek + 1; // 已过天数
+    const weekTotal = 7;
+    const weekPercent = (weekPassed / weekTotal) * 100;
+    document.getElementById('week-text').textContent = `${weekPassed}/${weekTotal}`;
+    document.getElementById('week-bar').style.width = `${weekPercent}%`;
+  }
+
+  setInterval(() => {
+    updateClock();
+    updateProgress();
+  }, 1000);
+
+  updateClock();
+  updateProgress();
+</script>
+
+</body>
+</html>
